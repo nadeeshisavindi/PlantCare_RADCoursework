@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="PlantCare">
+  <rect width="32" height="32" rx="8" fill="#15803d"/>
+  <path d="M16 26V15" stroke="#f0fdf4" stroke-width="2" stroke-linecap="round"/>
+  <path d="M16 16c0-5 3-8 8-8 0 5-3 8-8 8Z" fill="#bbf7d0"/>
+  <path d="M16 19c0-4-2.5-6.5-7-6.5 0 4 2.5 6.5 7 6.5Z" fill="#86efac"/>
+</svg>
