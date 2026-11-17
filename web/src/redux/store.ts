@@ -3,6 +3,7 @@ import { setAuthFailureHandler } from "../services/api"
 import adminReducer from "./slices/adminSlice"
 import authReducer, { sessionExpired } from "./slices/authSlice"
 import careTaskReducer from "./slices/careTaskSlice"
+import notificationReducer from "./slices/notificationSlice"
 import plantReducer from "./slices/plantSlice"
 import uiReducer from "./slices/uiSlice"
 
@@ -12,9 +13,9 @@ export const store = configureStore({
     auth: authReducer,
     plants: plantReducer,
     careTasks: careTaskReducer,
+    notifications: notificationReducer,
     admin: adminReducer,
     ui: uiReducer
-    // notifications and analytics slices are added in later steps
   }
 })
 

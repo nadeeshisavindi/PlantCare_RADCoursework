@@ -8,7 +8,8 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "seed:admin": "tsx src/utils/seedAdmin.ts"
+    "seed:admin": "tsx src/utils/seedAdmin.ts",
+    "reminders:run": "tsx src/utils/runReminders.ts"
   },
   "keywords": [],
   "author": "",

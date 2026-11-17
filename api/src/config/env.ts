@@ -36,7 +36,8 @@ export const env = {
     from: optional('EMAIL_FROM', 'PlantCare <no-reply@plantcare.app>'),
   },
   reminders: {
-    cron: optional('REMINDER_CRON', '*/15 * * * *'),
+    cron: optional('REMINDER_CRON', '* * * * *'),
+    timezone: optional('REMINDER_TIMEZONE', 'Asia/Colombo'),
     defaultLeadHours: parseInt(optional('DEFAULT_REMINDER_LEAD_HOURS', '24'), 10),
   },
 } as const;

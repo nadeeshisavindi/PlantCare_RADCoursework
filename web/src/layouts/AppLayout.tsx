@@ -1,8 +1,9 @@
-import { useState, type ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import { NavLink, Outlet } from "react-router-dom"
 import ToastContainer from "../components/ToastContainer"
 import { useAppDispatch, useAppSelector } from "../redux/hooks"
 import { logout } from "../redux/slices/authSlice"
+import { fetchUnreadCount } from "../redux/slices/notificationSlice"
 
 type NavItem = { to: string; label: string; end?: boolean; icon: ReactNode; adminOnly?: boolean; userOnly?: boolean }
 
@@ -41,6 +42,16 @@ const NAV_ITEMS: NavItem[] = [
     )
   },
   {
+    to: "/notifications",
+    label: "Notifications",
+    userOnly: true,
+    icon: (
+      <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6Zm4 9a2 2 0 0 0 4 0" />
+      </svg>
+    )
+  },
+  {
     to: "/admin",
     label: "Admin",
     adminOnly: true,
@@ -60,14 +71,31 @@ const linkClass = ({ isActive }: { isActive: boolean }): string =>
 const AppLayout = () => {
   const dispatch = useAppDispatch()
   const user = useAppSelector((s) => s.auth.user)
+  const unreadCount = useAppSelector((s) => s.notifications.unreadCount)
   const [menuOpen, setMenuOpen] = useState(false)
+
+  // Badge on the Notifications link: check now, then once a minute (users only)
+  useEffect(() => {
+    if (user?.role !== "user") return
+    dispatch(fetchUnreadCount())
+    const timer = setInterval(() => dispatch(fetchUnreadCount()), 60_000)
+    return () => clearInterval(timer)
+  }, [dispatch, user?.role])
 
   const nav = (
     <nav aria-label="Main" className="flex flex-col gap-1">
       {NAV_ITEMS.filter((item) => (item.adminOnly ? user?.role === "admin" : !(item.userOnly && user?.role === "admin"))).map((item) => (
         <NavLink key={item.to} to={item.to} end={item.end} className={linkClass} onClick={() => setMenuOpen(false)}>
           {item.icon}
-          {item.label}
+          <span className="flex-1">{item.label}</span>
+          {item.to === "/notifications" && unreadCount > 0 && (
+            <span
+              className="rounded-full bg-red-600 px-2 py-0.5 text-xs font-semibold text-white"
+              aria-label={`${unreadCount} unread`}
+            >
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </span>
+          )}
         </NavLink>
       ))}
     </nav>

@@ -11,6 +11,7 @@ import EditCareTask from "../pages/EditCareTask"
 import EditPlant from "../pages/EditPlant"
 import Login from "../pages/Login"
 import MyPlants from "../pages/MyPlants"
+import Notifications from "../pages/Notifications"
 import PlantDetails from "../pages/PlantDetails"
 import Register from "../pages/Register"
 import { useAppSelector } from "../redux/hooks"
@@ -98,6 +99,8 @@ const AppRouter = () => {
           <Route path="/care-schedule" element={<UserOnly><CareSchedule /></UserOnly>} />
           <Route path="/care-schedule/new" element={<UserOnly><AddCareTask /></UserOnly>} />
           <Route path="/care-schedule/:id/edit" element={<UserOnly><EditCareTask /></UserOnly>} />
+
+          <Route path="/notifications" element={<UserOnly><Notifications /></UserOnly>} />
 
           {/* Admin only: normal users see "Access denied" */}
           <Route

@@ -7,6 +7,7 @@ import { errorHandler, notFound } from './middlewares/errorHandler';
 import AdminRouter from './routes/admin.routers';
 import AuthRouter from './routes/auth.routers';
 import CareTaskRouter from './routes/careTask.routers';
+import NotificationRouter from './routes/notification.routers';
 import PlantRouter from './routes/plant.routers';
 
 const app = express();
@@ -37,6 +38,7 @@ app.use('/api/auth', AuthRouter);
 app.use('/api/admin', AdminRouter);
 app.use('/api/plants', PlantRouter);
 app.use('/api/care-tasks', CareTaskRouter);
+app.use('/api/notifications', NotificationRouter);
 
 app.use(notFound);
 app.use(errorHandler);
