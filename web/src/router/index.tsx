@@ -2,8 +2,12 @@ import type { ReactNode } from "react"
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom"
 import Spinner from "../components/Spinner"
 import AppLayout from "../layouts/AppLayout"
+import AdminDashboard from "../pages/AdminDashboard"
+import AddCareTask from "../pages/AddCareTask"
 import AddPlant from "../pages/AddPlant"
+import CareSchedule from "../pages/CareSchedule"
 import Dashboard from "../pages/Dashboard"
+import EditCareTask from "../pages/EditCareTask"
 import EditPlant from "../pages/EditPlant"
 import Login from "../pages/Login"
 import MyPlants from "../pages/MyPlants"
@@ -17,7 +21,7 @@ type RequireAuthProps = {
   roles?: UserRole[]
 }
 
-
+// Protected route: must be logged in (and have one of `roles` if given)
 const RequireAuth = ({ children, roles }: RequireAuthProps) => {
   const { user, initialized } = useAppSelector((s) => s.auth)
   const location = useLocation()
@@ -38,7 +42,14 @@ const RequireAuth = ({ children, roles }: RequireAuthProps) => {
   return <>{children}</>
 }
 
+// Admins manage the system only; they have no personal plants, so send them to /admin
+const UserOnly = ({ children }: { children: ReactNode }) => {
+  const user = useAppSelector((s) => s.auth.user)
+  if (user?.role === "admin") return <Navigate to="/admin" replace />
+  return <>{children}</>
+}
 
+// Login/Register are only for logged-out users
 const GuestOnly = ({ children }: { children: ReactNode }) => {
   const { user, initialized } = useAppSelector((s) => s.auth)
 
@@ -69,7 +80,7 @@ const AppRouter = () => {
           }
         />
 
-        {}
+        {/* Everything below needs a logged-in user and uses the sidebar layout */}
         <Route
           element={
             <RequireAuth>
@@ -77,12 +88,26 @@ const AppRouter = () => {
             </RequireAuth>
           }
         >
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/plants" element={<MyPlants />} />
-          {}
-          <Route path="/plants/new" element={<AddPlant />} />
-          <Route path="/plants/:id" element={<PlantDetails />} />
-          <Route path="/plants/:id/edit" element={<EditPlant />} />
+          <Route path="/" element={<UserOnly><Dashboard /></UserOnly>} />
+          <Route path="/plants" element={<UserOnly><MyPlants /></UserOnly>} />
+          {/* "new" is listed before ":id" so it is not mistaken for a plant id */}
+          <Route path="/plants/new" element={<UserOnly><AddPlant /></UserOnly>} />
+          <Route path="/plants/:id" element={<UserOnly><PlantDetails /></UserOnly>} />
+          <Route path="/plants/:id/edit" element={<UserOnly><EditPlant /></UserOnly>} />
+
+          <Route path="/care-schedule" element={<UserOnly><CareSchedule /></UserOnly>} />
+          <Route path="/care-schedule/new" element={<UserOnly><AddCareTask /></UserOnly>} />
+          <Route path="/care-schedule/:id/edit" element={<UserOnly><EditCareTask /></UserOnly>} />
+
+          {/* Admin only: normal users see "Access denied" */}
+          <Route
+            path="/admin"
+            element={
+              <RequireAuth roles={["admin"]}>
+                <AdminDashboard />
+              </RequireAuth>
+            }
+          />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

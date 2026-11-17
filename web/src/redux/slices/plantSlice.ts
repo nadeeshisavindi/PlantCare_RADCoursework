@@ -8,10 +8,11 @@ type RequestStatus = "idle" | "loading" | "succeeded" | "failed"
 
 interface PlantState {
   items: Plant[]
+  options: Plant[] // all of the user's plants (up to 50), used by the task form and filters
   pagination: Pagination | null
   listStatus: RequestStatus
   listError: string | null
-  lastListRequestId: string | null
+  lastListRequestId: string | null // ignore out-of-order responses while the user types
   current: Plant | null
   detailStatus: RequestStatus
   detailError: string | null
@@ -20,6 +21,7 @@ interface PlantState {
 
 const initialState: PlantState = {
   items: [],
+  options: [],
   pagination: null,
   listStatus: "idle",
   listError: null,
@@ -41,6 +43,18 @@ export const fetchPlants = createAsyncThunk<
     return rejectWithValue(getErrorMessage(error))
   }
 })
+
+export const fetchPlantOptions = createAsyncThunk<Plant[], void, { rejectValue: string }>(
+  "plants/fetchOptions",
+  async (_, { rejectWithValue }) => {
+    try {
+      const data = await plantService.listPlants({ limit: 50, sort: "name" })
+      return data.plants
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error))
+    }
+  }
+)
 
 export const fetchPlant = createAsyncThunk<Plant, string, { rejectValue: string }>(
   "plants/fetchOne",
@@ -92,7 +106,7 @@ const plantSlice = createSlice({
   name: "plants",
   initialState,
   reducers: {
-    // logout unaama call karanawa e nisa next user ta previous userge plants penne naha
+    // Called on logout so the next user never sees the previous user's plants
     resetPlants: () => initialState
   },
   extraReducers: (builder) => {
@@ -117,7 +131,10 @@ const plantSlice = createSlice({
         state.listStatus = "failed"
         state.listError = action.payload ?? "Could not load plants"
       })
-
+      // plant options (for dropdowns)
+      .addCase(fetchPlantOptions.fulfilled, (state, action) => {
+        state.options = action.payload
+      })
       // single plant
       .addCase(fetchPlant.pending, (state) => {
         state.detailStatus = "loading"
@@ -132,11 +149,6 @@ const plantSlice = createSlice({
         state.detailStatus = "failed"
         state.detailError = action.payload ?? "Could not load this plant"
       })
-
-
-
-
-
       // create
       .addCase(createPlant.pending, (state) => {
         state.saveStatus = "loading"
@@ -158,14 +170,10 @@ const plantSlice = createSlice({
       .addCase(updatePlant.rejected, (state) => {
         state.saveStatus = "failed"
       })
-
-
-
-
-      
       // delete
       .addCase(deletePlant.fulfilled, (state, action) => {
         state.items = state.items.filter((p) => p._id !== action.payload)
+        state.options = state.options.filter((p) => p._id !== action.payload)
         if (state.pagination) state.pagination.total = Math.max(0, state.pagination.total - 1)
         if (state.current?._id === action.payload) state.current = null
       })

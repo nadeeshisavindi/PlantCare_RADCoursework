@@ -3,7 +3,7 @@ import { CareType, RecurrenceUnit, TaskStatus } from '../types/enums';
 
 export interface IRecurrence {
   unit: RecurrenceUnit;
-  interval: number;
+  interval: number; // every N days/weeks/months
 }
 
 export interface ICareTask extends Document {
@@ -48,7 +48,7 @@ const careTaskSchema = new Schema<ICareTask>(
   { timestamps: true }
 );
 
-
+// Used by dashboard queries and the reminder scheduler
 careTaskSchema.index({ owner: 1, status: 1, dueDate: 1 });
 careTaskSchema.index({ status: 1, dueDate: 1 });
 

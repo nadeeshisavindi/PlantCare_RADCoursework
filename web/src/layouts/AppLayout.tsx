@@ -4,7 +4,7 @@ import ToastContainer from "../components/ToastContainer"
 import { useAppDispatch, useAppSelector } from "../redux/hooks"
 import { logout } from "../redux/slices/authSlice"
 
-type NavItem = { to: string; label: string; end?: boolean; icon: ReactNode }
+type NavItem = { to: string; label: string; end?: boolean; icon: ReactNode; adminOnly?: boolean; userOnly?: boolean }
 
 const iconClass = "h-5 w-5 shrink-0"
 
@@ -12,6 +12,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     to: "/",
     label: "Dashboard",
+    userOnly: true,
     end: true,
     icon: (
       <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
@@ -22,9 +23,30 @@ const NAV_ITEMS: NavItem[] = [
   {
     to: "/plants",
     label: "My Plants",
+    userOnly: true,
     icon: (
       <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8m0 0c0-4 2.5-7 8-7 0 4.500-2.500 7-8 7Zm0 2c0-3-2-5.500-6-5.500 0 3.500 2 5.500 6 5.500Z" />
+      </svg>
+    )
+  },
+  {
+    to: "/care-schedule",
+    label: "Care Schedule",
+    userOnly: true,
+    icon: (
+      <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8 3v3m8-3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm4 9 2 2 4-4" />
+      </svg>
+    )
+  },
+  {
+    to: "/admin",
+    label: "Admin",
+    adminOnly: true,
+    icon: (
+      <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3 4 6v6c0 4.500 3.400 8 8 9 4.600-1 8-4.500 8-9V6l-8-3Zm-3 9 2 2 4-4" />
       </svg>
     )
   }
@@ -42,7 +64,7 @@ const AppLayout = () => {
 
   const nav = (
     <nav aria-label="Main" className="flex flex-col gap-1">
-      {NAV_ITEMS.map((item) => (
+      {NAV_ITEMS.filter((item) => (item.adminOnly ? user?.role === "admin" : !(item.userOnly && user?.role === "admin"))).map((item) => (
         <NavLink key={item.to} to={item.to} end={item.end} className={linkClass} onClick={() => setMenuOpen(false)}>
           {item.icon}
           {item.label}
@@ -74,14 +96,14 @@ const AppLayout = () => {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      {}
+      {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col gap-6 border-r border-stone-200 bg-white p-5 lg:flex">
         {brand}
         <div className="flex-1">{nav}</div>
         {account}
       </aside>
 
-      {}
+      {/* Mobile / tablet top bar */}
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-stone-200 bg-white px-4 py-3 lg:hidden">
         {brand}
         <button

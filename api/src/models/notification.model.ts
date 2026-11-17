@@ -8,7 +8,7 @@ export interface INotification extends Document {
   type: NotificationType;
   title: string;
   message: string;
-  dueDate: Date; 
+  dueDate: Date; // the task's due date this reminder refers to (part of the dedupe key)
   isRead: boolean;
   readAt?: Date;
   emailStatus: EmailStatus;
@@ -36,10 +36,11 @@ const notificationSchema = new Schema<INotification>(
   { timestamps: true }
 );
 
-
+// Duplicate prevention: one notification per (task, type, dueDate).
+// A recurring task gets a new dueDate after completion, so it can notify again.
 notificationSchema.index({ task: 1, type: 1, dueDate: 1 }, { unique: true });
 
-
+// Fast inbox queries (unread first, newest first)
 notificationSchema.index({ user: 1, isRead: 1, createdAt: -1 });
 
 export const Notification: Model<INotification> = model<INotification>('Notification', notificationSchema);

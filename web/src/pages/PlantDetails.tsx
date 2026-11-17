@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import ConfirmDialog from "../components/ConfirmDialog"
 import PlantImage from "../components/PlantImage"
+import PlantTasks from "../components/PlantTasks"
 import Spinner from "../components/Spinner"
 import { useAppDispatch, useAppSelector } from "../redux/hooks"
 import { deletePlant, fetchPlant } from "../redux/slices/plantSlice"
@@ -133,6 +134,8 @@ const PlantDetails = () => {
           </Link>
         </p>
       )}
+
+      <PlantTasks plantId={plant._id} />
 
       <ConfirmDialog
         open={confirmOpen}

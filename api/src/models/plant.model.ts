@@ -69,7 +69,7 @@ const plantSchema = new Schema<IPlant>(
   { timestamps: true }
 );
 
-
+// Fast per-user listing + text search by name/species
 plantSchema.index({ owner: 1, createdAt: -1 });
 plantSchema.index({ name: 'text', species: 'text' });
 
