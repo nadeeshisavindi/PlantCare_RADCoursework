@@ -1,16 +1,16 @@
-# Dependencies
+# dependencies
 node_modules/
 
-# Environment files (never commit secrets)
+# environment files 
 .env
 .env.*
 !.env.example
 
-# Build output
+#bBuild output
 dist/
 build/
 
-# Logs
+# logs
 *.log
 npm-debug.log*
 
