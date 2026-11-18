@@ -1,4 +1,3 @@
-// Run one reminder check right now (handy for testing / the viva demo): npm run reminders:run
 import mongoose from 'mongoose';
 import { connectDB } from '../config/db';
 import { runReminderCheck } from '../services/reminder.service';
