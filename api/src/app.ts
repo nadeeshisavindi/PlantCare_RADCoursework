@@ -29,7 +29,7 @@ app.use(
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
 
-// Health check (used by Render)
+// health check (used by Render)
 app.get('/api/health', (_req: Request, res: Response) => {
   res.status(200).json({ success: true, message: 'PlantCare API is running', uptime: process.uptime() });
 });
