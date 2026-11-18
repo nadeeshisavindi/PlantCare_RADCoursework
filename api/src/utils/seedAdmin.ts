@@ -3,7 +3,7 @@ import { connectDB } from '../config/db';
 import { User } from '../models/user.model';
 import { UserRole } from '../types/enums';
 
-// Usage: npm run seed:admin   (reads ADMIN_NAME, ADMIN_EMAIL, ADMIN_PASSWORD from .env)
+
 const run = async (): Promise<void> => {
   const name = process.env.ADMIN_NAME ?? 'PlantCare Admin';
   const email = process.env.ADMIN_EMAIL;
