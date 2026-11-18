@@ -4,7 +4,7 @@ import { CareType, RecurrenceUnit } from '../types/enums';
 export const careTaskBodyRules = [
   body('plant').isMongoId().withMessage('Please choose a plant'),
   body('type').isIn(Object.values(CareType)).withMessage('Care type must be watering, fertilizing or pruning'),
-  // Title is optional: when it is empty the API builds one, e.g. "Water Kitchen Monstera"
+ 
   body('title')
     .optional({ values: 'falsy' })
     .isString().withMessage('Title must be text')
